@@ -4,16 +4,16 @@ import { motion } from "framer-motion";
 
 const audience = [
   {
-    title: "El que quiere escapar",
-    text: "Tiene hambre de cambio, pero necesita dirección concreta para dar sus primeros pasos digitales.",
+    title: "Estudiantes",
+    text: "Que buscan desarrollar habilidades digitales con aplicación real, más allá de la teoría tradicional.",
   },
   {
-    title: "El universitario perdido",
-    text: "Tiene teoría, carrera o conocimiento, pero todavía no sabe cómo traducirlo en ingresos reales.",
+    title: "Profesionales",
+    text: "Que necesitan optimizar procesos, ordenar su trabajo y aumentar su productividad con herramientas actuales.",
   },
   {
-    title: "El dueño agotado",
-    text: "Tiene un negocio funcionando, pero vive apagando incendios porque todo depende de él.",
+    title: "Emprendedores",
+    text: "Que quieren construir sistemas escalables, automatizar tareas y liberar tiempo sin perder control.",
   },
 ];
 
@@ -29,6 +29,12 @@ export default function Audience() {
           <h2 className="text-5xl font-medium tracking-[-0.06em] md:text-7xl">
             No vendemos información. Vendemos dirección.
           </h2>
+
+          <p className="mt-6 max-w-xl leading-8 text-white/65">
+            AETERNA está pensada para personas de habla hispana que quieren
+            construir habilidades, procesos y oportunidades reales en la
+            economía digital.
+          </p>
         </div>
 
         <div className="space-y-5">
@@ -44,7 +50,9 @@ export default function Audience() {
               <span className="serif text-5xl text-emerald-300">
                 0{index + 1}
               </span>
+
               <h3 className="mt-5 text-2xl font-semibold">{item.title}</h3>
+
               <p className="mt-3 leading-7 text-white/65">{item.text}</p>
             </motion.article>
           ))}

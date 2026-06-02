@@ -1,31 +1,45 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { Check, Plus } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
 type ProductCardProps = {
+  id: string;
   name: string;
-  price: string;
+  priceLabel: string;
   tag: string;
   title: string;
   description: string;
   pain: string;
   desire: string;
-  href: string;
   index: number;
 };
 
 export default function ProductCard({
+  id,
   name,
-  price,
+  priceLabel,
   tag,
   title,
   description,
   pain,
   desire,
-  href,
   index,
 }: ProductCardProps) {
+  const { addItem, removeItem, isInCart, openCart } = useCart();
+
+  const added = isInCart(id);
+
+  function handleClick() {
+    if (added) {
+      openCart();
+      return;
+    }
+
+    addItem(id);
+  }
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 45, filter: "blur(12px)" }}
@@ -41,7 +55,10 @@ export default function ProductCard({
           <span className="rounded-full border border-white/20 px-4 py-1 text-xs uppercase tracking-[0.22em] text-white/70">
             {tag}
           </span>
-          <span className="text-sm text-white/60">{price}</span>
+
+          <span className="text-sm font-semibold text-white/80">
+            {priceLabel}
+          </span>
         </div>
 
         <div className="mt-24">
@@ -59,26 +76,46 @@ export default function ProductCard({
         <div className="mt-8 space-y-4 rounded-[1.5rem] bg-black/20 p-5">
           <div>
             <p className="text-xs uppercase tracking-[0.24em] text-white/40">
-              Dolor
+              Problema
             </p>
             <p className="mt-1 text-white/70">{pain}</p>
           </div>
 
           <div>
             <p className="text-xs uppercase tracking-[0.24em] text-white/40">
-              Deseo
+              Transformación
             </p>
             <p className="mt-1 text-white/70">{desire}</p>
           </div>
         </div>
 
-        <a
-          href={href}
-          className="transparent-btn mt-7 flex items-center justify-between rounded-full px-6 py-3 text-sm font-semibold text-white transition"
-        >
-          Quiero esta guía
-          <ArrowUpRight size={18} />
-        </a>
+        <div className="mt-7 grid gap-3">
+          <button
+            onClick={handleClick}
+            className="transparent-btn flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white transition"
+          >
+            {added ? (
+              <>
+                <Check size={18} />
+                Ver carrito
+              </>
+            ) : (
+              <>
+                <Plus size={18} />
+                Agregar al carrito
+              </>
+            )}
+          </button>
+
+          {added && (
+            <button
+              onClick={() => removeItem(id)}
+              className="text-sm text-white/45 transition hover:text-white"
+            >
+              Quitar del carrito
+            </button>
+          )}
+        </div>
       </div>
     </motion.article>
   );

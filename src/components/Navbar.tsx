@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { UserCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import CartButton from "./CartButton";
 
 const links = [
   { label: "Inicio", href: "#inicio", id: "inicio" },
@@ -64,12 +65,7 @@ export default function Navbar() {
           ))}
         </div>
 
-        <a
-          href="#contacto"
-          className="transparent-btn flex h-10 w-10 items-center justify-center rounded-full"
-        >
-          <UserCircle size={24} />
-        </a>
+        <CartButton />
       </nav>
     </motion.header>
   );

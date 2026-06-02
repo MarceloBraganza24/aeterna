@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins, Cormorant_Garamond } from "next/font/google";
+import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${poppins.variable} ${cormorant.variable}`}>
-        {children}
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );

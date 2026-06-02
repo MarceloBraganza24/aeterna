@@ -1,25 +1,29 @@
-import { FaInstagram, FaFacebookF } from "react-icons/fa";
 import Image from "next/image";
+import { FaFacebookF, FaInstagram } from "react-icons/fa";
 
 function ShellLogo() {
   return (
-    <div className="flex items-center gap-4">
-      <a href="#inicio" className="relative h-18 w-18 overflow-hidden">
+    <a href="#inicio" className="flex items-center gap-4">
+      <div className="relative h-14 w-40">
         <Image
           src="/logo.webp"
           alt="AETERNA"
           fill
-          className="object-cover"
+          className="object-contain"
+          priority
         />
-      </a>
+      </div>
 
       <div>
-        <a  href="#inicio" className="text-lg font-semibold tracking-[0.38em]">AETERNA</a>
-        <p className="mt-2 text-sm text-white/45">
+        <p className="text-sm text-white/45">
           Guías prácticas de acción digital
         </p>
+
+        <p className="mt-2 text-xs text-white/35">
+          Latinoamérica y España · Pagos en USD
+        </p>
       </div>
-    </div>
+    </a>
   );
 }
 
@@ -36,15 +40,19 @@ export default function Footer() {
             <a href="#inicio" className="transition hover:text-white">
               Inicio
             </a>
+
             <a href="#filosofia" className="transition hover:text-white">
               Filosofía
             </a>
+
             <a href="#guias" className="transition hover:text-white">
               Guías
             </a>
+
             <a href="#metodo" className="transition hover:text-white">
               Método
             </a>
+
             <a href="#contacto" className="transition hover:text-white">
               Contacto
             </a>
@@ -64,9 +72,14 @@ export default function Footer() {
               className="transparent-btn flex h-10 w-10 items-center justify-center rounded-full transition"
               aria-label="Facebook"
             >
-              <FaFacebookF size={18} />
+              <FaFacebookF size={16} />
             </a>
           </div>
+
+          <p className="max-w-xs text-right text-xs leading-6 text-white/35">
+            Marca educativa digital para profesionales, estudiantes y
+            emprendedores de habla hispana.
+          </p>
         </div>
       </div>
     </footer>
