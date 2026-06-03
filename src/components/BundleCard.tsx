@@ -2,6 +2,7 @@
 
 import { Check, Plus } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { trackAddToCart } from "@/lib/analytics";
 
 export default function BundleCard() {
   const { addItem, removeItem, isInCart, openCart } = useCart();
@@ -15,6 +16,12 @@ export default function BundleCard() {
     }
 
     addItem("bundle_completo");
+
+    trackAddToCart({
+      productId: "bundle_completo",
+      productName: "Colección Completa AETERNA",
+      price: 149,
+    });
   }
 
   return (

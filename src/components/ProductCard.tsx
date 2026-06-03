@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Check, Plus } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { trackAddToCart } from "@/lib/analytics";
 
 type ProductCardProps = {
   id: string;
@@ -38,6 +39,11 @@ export default function ProductCard({
     }
 
     addItem(id);
+    trackAddToCart({
+      productId: id,
+      productName: name,
+      price: Number(priceLabel.replace("USD ", "")),
+    });
   }
 
   return (

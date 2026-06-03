@@ -3,7 +3,6 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -27,21 +26,25 @@ const CartContext = createContext<CartContextType | null>(null);
 
 const CART_KEY = "aeterna_cart";
 
+function getInitialCart(): string[] {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const savedCart = window.localStorage.getItem(CART_KEY);
+    return savedCart ? JSON.parse(savedCart) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCart(productIds: string[]) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(CART_KEY, JSON.stringify(productIds));
+}
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [productIds, setProductIds] = useState<string[]>([]);
+  const [productIds, setProductIds] = useState<string[]>(getInitialCart);
   const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    const savedCart = localStorage.getItem(CART_KEY);
-
-    if (savedCart) {
-      setProductIds(JSON.parse(savedCart));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(CART_KEY, JSON.stringify(productIds));
-  }, [productIds]);
 
   const items = useMemo(() => {
     return productIds
@@ -54,19 +57,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const addItem = (productId: string) => {
     setProductIds((current) => {
       if (current.includes(productId)) return current;
-      return [...current, productId];
+
+      const updated = [...current, productId];
+      saveCart(updated);
+
+      return updated;
     });
 
     setIsOpen(true);
   };
 
   const removeItem = (productId: string) => {
-    setProductIds((current) => current.filter((id) => id !== productId));
+    setProductIds((current) => {
+      const updated = current.filter((id) => id !== productId);
+      saveCart(updated);
+
+      return updated;
+    });
   };
 
   const clearCart = () => {
+    saveCart([]);
     setProductIds([]);
-    localStorage.removeItem(CART_KEY);
   };
 
   const isInCart = (productId: string) => {

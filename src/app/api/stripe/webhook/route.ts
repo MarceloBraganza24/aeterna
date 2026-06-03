@@ -1,7 +1,9 @@
+import Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { resend } from "@/lib/resend";
 import { getProductById } from "@/data/products";
-import Stripe from "stripe";
+import { connectDB } from "@/lib/mongoose";
+import Purchase from "@/models/Purchase";
 
 const downloadLinks: Record<string, string> = {
   kit_escape: "/pdfs/kit-escape.pdf",
@@ -27,12 +29,22 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
+  } catch (error) {
+    console.error("Webhook signature error:", error);
 
+    return new Response("Webhook Error", {
+      status: 400,
+    });
+  }
+
+  try {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
 
       const customerEmail =
         session.customer_details?.email || session.customer_email;
+
+      const customerName = session.customer_details?.name || "";
 
       const productIds = session.metadata?.productIds?.split(",") || [];
 
@@ -43,7 +55,35 @@ export async function POST(req: Request) {
 
       const uniqueDownloadIds = Array.from(new Set(downloadIds));
 
-      if (customerEmail && uniqueDownloadIds.length > 0) {
+      if (!customerEmail) {
+        console.log("Compra sin email:", session.id);
+        return Response.json({ received: true });
+      }
+
+      await connectDB();
+
+      const existingPurchase = await Purchase.findOne({
+        stripeSessionId: session.id,
+      });
+
+      if (!existingPurchase) {
+        await Purchase.create({
+          email: customerEmail,
+          customerName,
+          stripeSessionId: session.id,
+          stripePaymentIntentId:
+            typeof session.payment_intent === "string"
+              ? session.payment_intent
+              : undefined,
+          products: productIds,
+          downloads: uniqueDownloadIds,
+          amountTotal: session.amount_total ? session.amount_total / 100 : 0,
+          currency: session.currency || "usd",
+          paymentStatus: session.payment_status,
+        });
+      }
+
+      if (uniqueDownloadIds.length > 0) {
         const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
 
         const linksHtml = uniqueDownloadIds
@@ -90,15 +130,15 @@ export async function POST(req: Request) {
         });
       }
 
-      console.log("Pago recibido:", session.id);
+      console.log("Compra guardada:", session.id);
     }
 
     return Response.json({ received: true });
   } catch (error) {
-    console.error(error);
+    console.error("Webhook handler error:", error);
 
-    return new Response("Webhook Error", {
-      status: 400,
+    return new Response("Webhook Handler Error", {
+      status: 500,
     });
   }
 }

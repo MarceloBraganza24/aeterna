@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { UserCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import CartButton from "./CartButton";
 

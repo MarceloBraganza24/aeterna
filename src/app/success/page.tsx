@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getProductById } from "@/data/products";
 import SuccessCleanup from "@/components/SuccessCleanup";
+import PurchaseTracker from "@/components/PurchaseTracker";
 
 const downloads: Record<string, string> = {
   kit_escape: "/pdfs/kit-escape.pdf",
@@ -19,9 +20,10 @@ export default async function Success({
 }: {
   searchParams: Promise<{
     products?: string;
+    session_id?: string;
   }>;
 }) {
-  const { products } = await searchParams;
+  const { products, session_id } = await searchParams;
 
   const productIds = products ? products.split(",") : [];
 
@@ -32,8 +34,22 @@ export default async function Success({
 
   const uniqueDownloadIds = Array.from(new Set(downloadIds));
 
+  const purchasedProducts = productIds
+    .map((id) => getProductById(id))
+    .filter(Boolean);
+
+  const total = purchasedProducts.reduce(
+    (acc, product) => acc + (product?.price ?? 0),
+    0
+  );
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#03170f] px-5">
+      <PurchaseTracker
+        productIds={productIds}
+        value={total}
+        transactionId={session_id ?? "manual-success"}
+      />
       <SuccessCleanup />
 
       <div className="glass w-full max-w-xl rounded-[2rem] p-10 text-center">

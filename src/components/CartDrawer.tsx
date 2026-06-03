@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Trash2, ArrowUpRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { trackBeginCheckout } from "@/lib/analytics";
 
 const formatPrice = (value: number) => {
   return `USD ${value}`;
@@ -13,6 +14,11 @@ export default function CartDrawer() {
 
   async function handleCheckout() {
     if (items.length === 0) return;
+    
+    trackBeginCheckout({
+      value: total,
+      productIds: items.map((item) => item.id),
+    });
 
     const response = await fetch("/api/checkout", {
       method: "POST",
